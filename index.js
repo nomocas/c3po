@@ -32,14 +32,15 @@
 				if (!this.protocol)
 					return this.original;
 				options = options || options;
-				var protocol = c3po.getInitialisedProtocol(this.protocol),
+				var protocol = c3po.protocol(this.protocol),
 					uri = (this.interpolable && c3po.interpolator && context) ? c3po.interpolator.interpolate(this.pointer, context) : this.pointer,
-					method = this.method;
+					method = this.method,
+					args = this.args ? [].concat(this.args, uri, options) : [uri, options];
 				if (protocol && typeof protocol.then === 'function')
 					return protocol.then(function(protocol) {
-						return protocol[method](uri, options);
+						return protocol[method].apply(protocol, args);
 					});
-				return protocol[method](uri, options);
+				return protocol[method].apply(protocol, args);
 			}
 		};
 		var c3po = {
