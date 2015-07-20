@@ -1,5 +1,5 @@
 /**
- * c3po : Lightweight protocols manager.
+ * c3po : Lightweight but powerful protocols manager.
  *  
  * Aimed to be used both sides (server side and/or browser side) to give isomorphic approach when designing object that need ressources.
  * 
