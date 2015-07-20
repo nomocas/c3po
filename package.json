@@ -1,7 +1,7 @@
 {
   "name": "c3po",
-  "version": "0.1.0",
-  "description": "Javascript functions compositions tools",
+  "version": "1.0.0",
+  "description": "Lightweight and fast protocols manager for isomorphic code.",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nomocas/decompose.git"
+    "url": "https://github.com/nomocas/c3po.git"
   },
   "keywords": [
     "protocols",
@@ -23,9 +23,9 @@
   "author": "Gilles Coomans <gilles.coomans@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nomocas/decompose/issues"
+    "url": "https://github.com/nomocas/c3po/issues"
   },
-  "homepage": "https://github.com/nomocas/decompose",
+  "homepage": "https://github.com/nomocas/c3po",
   "devDependencies": {
     "gulp": "^3.8.11",
     "chai": "^2.2.0",
