@@ -123,7 +123,7 @@
 	if (typeof module !== 'undefined')
 		module.exports = factory(); // CommonJS environment
 	else if (typeof window !== 'undefined')
-		window.c3po = factory(null); // raw script, assign to c3po global
+		window.c3po = factory(); // raw script, assign to c3po global
 	else
 		console.warn('c3po has not been mounted somewhere.');
 });
