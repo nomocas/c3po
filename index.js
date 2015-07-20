@@ -1,7 +1,7 @@
 /**
  * c3po : Lightweight but powerful protocols manager.
  *  
- * Aimed to be used both sides (server side and/or browser side) to give isomorphic approach when designing object that need ressources.
+ * Aimed to be used both sides (server side and/or browser side) to give real isomorphic approach when designing object that need ressources.
  * 
  * @author Gilles Coomans <gilles.coomans@gmail.com>
  * @licence MIT
@@ -34,13 +34,17 @@
 				options = options || options;
 				var protocol = c3po.protocol(this.protocol),
 					uri = (this.interpolable && c3po.interpolator && context) ? c3po.interpolator.interpolate(this.pointer, context) : this.pointer,
-					method = this.method,
+					self = this,
 					args = this.args ? [].concat(this.args, uri, options) : [uri, options];
-				if (protocol && typeof protocol.then === 'function')
+				if (protocol && typeof protocol.then === 'function') // protocol is under init
 					return protocol.then(function(protocol) {
-						return protocol[method].apply(protocol, args);
-					});
-				return protocol[method].apply(protocol, args);
+					if (!protocol[self.method])
+						throw new Error("there is no method named '%s' in protocol '%s'!", self.method, self.protocol);
+					return protocol[self.method].apply(protocol, args);
+				});
+				if (!protocol[this.method])
+					throw new Error("there is no method named '%s' in protocol '%s'!", self.method, self.protocol);
+				return protocol[this.method].apply(protocol, args);
 			}
 		};
 		var c3po = {
