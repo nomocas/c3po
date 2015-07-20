@@ -1,19 +1,18 @@
 # c3po
 
-Extracted from [deepjs](https://github.com/deepjs/deepjs) core lib.
 Previously named deep-protocols.
 
-c3po is a lightweight (2.4 Ko minified, less than 1.0 Ko minified/gzipped) protocols manager which focus on providing easy way to write isomorphic code that need to retrieve dependant resources.
+c3po is a lightweight (1.9 Ko minified, less than 850 Bytes minified/gzipped) protocols manager which focus on providing easy way to write isomorphic code that need to retrieve dependant resources.
 
 ## Main idea
 
 Imagine a modern web app where the client app needs to retrieve data from server with an ajax call. The server which in turn needs to retrieve data from DB (db driver call) or FS (nodejs fs api call, ...) to fullfill the request to the client.
 
 In fact, from client or server point of vue : it's the same resource. Only the way to talk to it differ with environnement :
-- client needs ajax calls (with headers, optional body shape, ...) that talk to server...
+- client needs ajax calls (with headers, optional body shape, ...) that talk to server
 - and server needs fs/db/... drivers (with credentials/roles management, specific cwd, ...) to build response
 
-If we want to write some code that do something __independently__ from client or server, without changing the code that retrieve and use resources, you need to provide an abstraction layer which hides details of real calls and provides homogeneous, environnement agnostic way to read or manipulate resource.
+If we want to write some code that do that __independently__ from client or server, without changing the code that retrieve and use resources, you need to provide an abstraction layer which hides details of real calls and provides homogeneous, environnement agnostic way to read or manipulate resource.
 
 Ideally, we ask and get resources, we work on it, and maybe send something somewhere, __without to know__ if we're on client or server.
 
@@ -22,9 +21,6 @@ This __is__ isomorphic, and c3po is there to help us in that quest.
 
 ```javascript
 c3po.protocols.foo = {
-  init:function(){
-      // do what you want
-  },
   get:function(req, opt){
     return "you say : " + req;
   }
@@ -36,7 +32,30 @@ var result = c3po.get("foo::bar");
 
 ## Protocol methods
 
+```javascript
+c3po.protocols.foo = {
+  zoo:function(req, opt){
+    return "you say : " + req;
+  }
+};
+
+var result = c3po.get("foo.zoo::bar"); 
+// => "you say : bar"
+```
+
 ### Methods arguments
+
+```javascript
+c3po.protocols.foo = {
+  zoo:function(arg1, arg2, req, opt){
+    return "you say : " + arg1 + " " + req + "'s' " + arg2 
+  }
+};
+
+var result = c3po.get("foo.zoo(hello, world)::bar"); 
+// => "you say : hello bar's world"
+```
+
 
 ## Interpolation
 
@@ -48,7 +67,6 @@ var result = c3po.get("foo::bar");
 
 AMD and CommonJS environnement only.
 
-## Promise A+ compliance
 
 ## Simple synchroneous init
 
@@ -103,7 +121,7 @@ As C-3PO, sometimes it's necessary to use contextualised protocols to remain ful
 // native js:: protocol based on async require(...) (only for AMD or CommonJS env.)
 c3po.protocols.js = {
 	get: function(path, options) {
-		return new c3po.Promise(function(resolve, reject) {
+		return new Promise(function(resolve, reject) {
 			require([path], function(obj) {
 				resolve(obj);
 			}, function(err) {
