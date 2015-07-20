@@ -9,16 +9,21 @@
 (function(define) {
 	"use strict";
 	define([], function() {
+		var parser = /^([\w-]+)(?:\.([\w-]+)(?:\(([^\)]*)\))?)?::([^$]*)/;
 		var Request = function(request) {
 			this.__c3po__ = true;
 			this.original = request;
 			var protoIndex;
-			if (request && request[0] !== '<' && ((protoIndex = request.substring(0, 50).indexOf("::")) > -1)) {
-				var parsed = c3po.parseProtocol(request.substring(0, protoIndex));
-				this.protocol = parsed.protocol;
-				this.method = parsed.method;
-				this.args = parsed.args;
-				this.pointer = request.substring(protoIndex + 2);
+			if (request[0] === '<')
+				return;
+			var match = parser.exec(request);
+			if (match) {
+				this.protocol = match[1];
+				this.method = match[2] || "get";
+				this.args = match[3] ? match[3].split(",").map(function(arg) {
+					return arg.trim();
+				}) : null;
+				this.pointer = match[4];
 				this.interpolable = c3po.interpolator ? c3po.interpolator.isInterpolable(this.pointer) : false;
 			}
 		};
@@ -93,27 +98,6 @@
 					protocol.initialised = true;
 				}
 				return protocol;
-			},
-			parseProtocol: function(protocol) {
-				var output =   {
-						method: "get"
-					},
-					argsPresence = protocol.indexOf("(");
-				if (argsPresence > -1) {
-					var parenthesis = protocol.substring(argsPresence + 1, protocol.length - 1);
-					protocol = protocol.substring(0, argsPresence);
-					if (parenthesis)
-						output.args = parenthesis.split(",").map(function(s) {
-							return s.trim();
-						});
-				}
-				var splitted = protocol.split(".");
-				if (splitted.length == 2) {
-					protocol = splitted[0];
-					output.method = splitted[1];
-				}
-				output.protocol = protocol;
-				return output;
 			},
 			get: function(request, options, context) {
 				if (!request.__c3po__) {
