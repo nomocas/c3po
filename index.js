@@ -56,31 +56,30 @@
 				}
 			},
 			fromContext: null, // to use contextualised protocols namespace. 
-			interpolator: null,
-			getProtocol: function(name) {
+			interpolator: null, // to allow request interpolation on get
+			protocol: function(name) {
 				var protocol = null;
-				// first : look in contextualised namespace if any
-				if (c3po.fromContext)
-					protocol = c3po.fromContext(name);
-				// or look in global namespace
-				if (!protocol)
-					protocol = c3po.protocols[name];
-				if (!protocol)
-					throw new Error("no protocol found with : ", name);
-				return protocol;
-			},
-			getInitialisedProtocol: function(name) {
-				var protocol = typeof name === 'string' ? c3po.getProtocol(name) : name;
-				// manage _deep_flattener_
+				if (typeof name === 'string') {
+					// first : look in contextualised namespace if any
+					if (c3po.fromContext)
+						protocol = c3po.fromContext(name);
+					// or look in global namespace
+					if (!protocol)
+						protocol = c3po.protocols[name];
+					if (!protocol)
+						throw new Error("no protocol found with : ", name);
+				} else
+					protocol = name;
+				// manage flattener
 				if (protocol._deep_flattener_ && !protocol._deep_flattened_)
 					return (protocol._deep_flattening_ ? protocol._deep_flattening_ : protocol.flatten())
 						.then(function() {
-							return c3po.getInitialisedProtocol(protocol);
+							return c3po.protocol(protocol);
 						});
 				// manage ocm resolution
 				if (protocol._deep_ocm_)
 					protocol = protocol();
-				// manage initialisation
+				// manage initialisation if needed
 				if (protocol.init && !protocol.initialised) {
 					var promise;
 					if (protocol.initialising)
@@ -88,7 +87,7 @@
 					else
 						promise = protocol.init();
 					if (promise && typeof promise.then === 'function') {
-						// async init case
+						// promised init case
 						protocol.initialising = promise;
 						return promise.then(function() {
 							protocol.initialising = null;
