@@ -8,7 +8,7 @@
  */
 (function(define) {
 	"use strict";
-	define(["require"], function(require) {
+	define([], function() {
 		var Request = function(request) {
 			this.__c3po__ = true;
 			this.original = request;
@@ -137,7 +137,7 @@
 	});
 })(typeof define !== 'undefined' ? define : function(deps, factory) { // AMD/RequireJS format if available
 	if (typeof module !== 'undefined')
-		module.exports = factory(require); // CommonJS environment
+		module.exports = factory(); // CommonJS environment
 	else if (typeof window !== 'undefined')
 		window.c3po = factory(null); // raw script, assign to c3po global
 	else
