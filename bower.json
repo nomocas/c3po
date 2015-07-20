@@ -1,0 +1,30 @@
+{
+  "name": "c3po",
+  "main": "index.js",
+  "version": "0.1.0",
+  "authors": [
+    "Gilles Coomans <gilles.coomans@gmail.com>"
+  ],
+  "description": "lightweight protocol manager.",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "functions",
+    "composition",
+    "AOP",
+    "js"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/nomocas/c3po",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "statics/libs/",
+    "test",
+    "tests"
+  ]
+}
