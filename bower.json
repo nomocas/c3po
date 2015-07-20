@@ -1,21 +1,22 @@
 {
   "name": "c3po",
   "main": "index.js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "authors": [
     "Gilles Coomans <gilles.coomans@gmail.com>"
   ],
-  "description": "lightweight protocol manager.",
+  "description": "Lightweight and fast protocols manager for isomorphic code.",
   "moduleType": [
     "amd",
     "globals",
+    "commonjs",
     "node"
   ],
   "keywords": [
-    "functions",
-    "composition",
-    "AOP",
-    "js"
+    "protocols",
+    "facade",
+    "js",
+    "isomorphic"
   ],
   "license": "MIT",
   "homepage": "https://github.com/nomocas/c3po",
