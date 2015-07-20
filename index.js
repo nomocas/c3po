@@ -59,14 +59,14 @@
 					}
 				}
 			},
-			fromContext: null, // to use contextualised protocols namespace. 
+			fromGlocal: null, // to use contextualised protocols namespace. 
 			interpolator: null, // to allow request interpolation on get
 			protocol: function(name) {
 				var protocol = null;
 				if (typeof name === 'string') {
 					// first : look in contextualised namespace if any
-					if (c3po.fromContext)
-						protocol = c3po.fromContext(name);
+					if (c3po.fromGlocal)
+						protocol = c3po.fromGlocal(name);
 					// or look in global namespace
 					if (!protocol)
 						protocol = c3po.protocols[name];
