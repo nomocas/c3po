@@ -65,11 +65,11 @@
 				var protocol = null;
 				if (typeof name === 'string') {
 					// first : look in contextualised namespace if any
-					if (c3po.fromGlocal)
-						protocol = c3po.fromGlocal(name);
+					if (this.fromGlocal)
+						protocol = this.fromGlocal(name);
 					// or look in global namespace
 					if (!protocol)
-						protocol = c3po.protocols[name];
+						protocol = this.protocols[name];
 					if (!protocol)
 						throw new Error("no protocol found with : ", name);
 				} else
@@ -105,12 +105,12 @@
 			},
 			get: function(request, options, context) {
 				if (!request.__c3po__) {
-					if (c3po.requestCache && c3po.requestCache[request])
-						request = c3po.requestCache[request];
+					if (this.requestCache && this.requestCache[request])
+						request = this.requestCache[request];
 					else {
-						request = new c3po.Request(request);
-						if (c3po.requestCache)
-							c3po.requestCache[request.original] = request;
+						request = new this.Request(request);
+						if (this.requestCache)
+							this.requestCache[request.original] = request;
 					}
 				}
 				return request.exec(options, context);
