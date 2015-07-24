@@ -18,7 +18,7 @@ Ideally, we ask and get resources, we work on it, and maybe send something somew
 
 This __is__ isomorphic, and c3po is there to help us in that quest.
 
-![Image](./blob/master/img/c3po.png?raw=true)
+![Image](https://github.com/nomocas/c3po/blob/master/img/c3po.png?raw=true)
 
 
 ```javascript
