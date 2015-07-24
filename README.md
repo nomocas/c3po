@@ -18,6 +18,8 @@ Ideally, we ask and get resources, we work on it, and maybe send something somew
 
 This __is__ isomorphic, and c3po is there to help us in that quest.
 
+![Image](../blob/master/img/c3po.png?raw=true)
+
 
 ```javascript
 c3po.protocols.foo = {
@@ -59,13 +61,15 @@ var result = c3po.get("foo.zoo(hello, world)::bar");
 
 ## Interpolation
 
+
+
+
 ## Native protocols
 
 ### dummy
 
-### js
 
-AMD and CommonJS environnement only.
+
 
 
 ## Simple synchroneous init
@@ -116,7 +120,10 @@ As C-3PO, sometimes it's necessary to use contextualised protocols to remain ful
 
 ## Dedicated protocols
 
-### js
+### js asycnhroneous loader :
+
+AMD and CommonJS environnement (based on "require" availability) :
+
 ```javascript
 // native js:: protocol based on async require(...) (only for AMD or CommonJS env.)
 c3po.protocols.js = {
@@ -134,6 +141,8 @@ c3po.protocols.js = {
 
 ### Restful Services and RQL
 
+
+
 ### Static resource loader
 #### Template loader
 
@@ -142,6 +151,31 @@ c3po.protocols.js = {
 ## Request Cache management
 
 ## Tests
+
+### Under nodejs
+
+You need to have mocha installed globally before launching test. 
+```
+> npm install -g mocha
+```
+Do not forget to install dev-dependencies. i.e. : from 'decompose' folder, type :
+```
+> npm install
+```
+
+then, always in 'decompose' folder simply enter :
+```
+> mocha
+```
+
+### In the browser
+
+Simply serve "c3po" folder in you favorite web server then open ./index.html.
+
+You could use the provided "gulp web server" by entering :
+```
+> gulp serve-test
+```
 
 ## Licence
 
