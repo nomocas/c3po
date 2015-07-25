@@ -120,7 +120,7 @@ As C-3PO, sometimes it's necessary to use contextualised protocols to remain ful
 
 ## Dedicated protocols
 
-### js asycnhroneous loader :
+### js asynchroneous loader :
 
 AMD and CommonJS environnement (based on "require" availability) :
 
@@ -158,12 +158,12 @@ You need to have mocha installed globally before launching test.
 ```
 > npm install -g mocha
 ```
-Do not forget to install dev-dependencies. i.e. : from 'decompose' folder, type :
+Do not forget to install dev-dependencies. i.e. : from 'c3po' folder, type :
 ```
 > npm install
 ```
 
-then, always in 'decompose' folder simply enter :
+then, always in 'c3po' folder simply enter :
 ```
 > mocha
 ```
