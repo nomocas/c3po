@@ -2,7 +2,7 @@
 
 Previously named deep-protocols.
 
-c3po is a lightweight (1.9 Ko minified, less than 850 Bytes minified/gzipped) protocols manager which focus on providing easy way to write isomorphic code that need to retrieve dependant resources.
+c3po is a lightweight (1.9 Ko minified, less than 850 Bytes minified/gzipped) javascript protocols manager which focus on providing easy way to write isomorphic code that need to retrieve dependant resources.
 
 ## Main idea
 
