@@ -86,7 +86,7 @@ c3po.interpolator = require("expansio");
 Then, you could :
 
 ```javascript
-c3po.get("json::/my/path/to/json/{ language }",  { language:"en" });
+c3po.get("json::/my/path/to/json/{ language }", null, { language:"en" });
 
 c3po.protocols.json = function(request, options){
     // request is : "/my/path/to/json/en"
