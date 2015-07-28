@@ -21,6 +21,8 @@ This __is__ isomorphic, and c3po is there to help us in that quest.
 ![Image](https://github.com/nomocas/c3po/blob/master/img/c3po.png?raw=true)
 
 
+## Example
+
 ```javascript
 c3po.protocols.foo = {
   get:function(req, opt){
@@ -61,66 +63,114 @@ var result = c3po.get("foo.zoo(hello, world)::bar");
 
 ## Interpolation
 
+You could use string interpolation if you need to dynamically produce the string that point to the needed resource (that could be called "abstract resource locator").
 
+For that, you need first to link a "string-interpolation engine" to c3po.
 
+```javascript
+c3po.interpolator = {
+  isInterpolable:function(string){
+    // returns true if "string" is interpolable
+  },
+  interpolate:function(string, context){
+    // returns interpolated "string" with the provided context
+  }
+};
+```
 
-## Native protocols
+Or with [expansion](https://github.com/nomocas/expansio) : 
+```javascript
+c3po.interpolator = require("expansio");
+```
 
-### dummy
+Then, you could :
 
+```javascript
+c3po.get("json::/my/path/to/json/{ language }",  { language:"en" });
 
+c3po.protocols.json = function(request, options){
+    // request is : "/my/path/to/json/en"
+    // ...
+};
+```
 
+## Dummy native protocols
 
+There is a single native protocol provided with c3po that is only there for test purpose.
+
+```javascript
+var output = c3po.get("dummy::hello world");
+// output : { dummy:"hello world" }
+```
 
 ## Simple synchroneous init
+
+If you need to define programmatically some custom properties or methods, you could provide an "init" method that will be called once and lazzily when needed.
 
 ```javascript
 c3po.protocols.foo = {
   init:function(){
+    this.title = "Lollipop";
       // do what you want
   },
   get:function(req, opt){
-    return "you say : " + req;
+    return this.title + " : you say : " + req;
   }
 };
 
 var result = c3po.get("foo::bar"); 
-// => "you say : bar"
+// => "Lollipop : you say : bar"
 ```
 
 
 ## Concurrent asynchrone lazzy init 
 
+If you need to make some asynch call while initialising, just return a promise.
+If you do so, c3po will manage concurrent asynch calls on same protocol while it is initialising.
+It means that, in heavy used asynch environnement (typically a nodejs production server), you could make bunch of call on a protocol even if the protocol is not fully initialised.
+c3po will use the promise returned from the first call to wait before launching each subsequent call.
+When protocol is fully initialised (promise is fullfiled), c3po will make it transparent.
+
 ```javascript
 c3po.protocols.foo = {
   init:function(){
+      var self = this;
+
+      // asynch simulation
       return new Promise(function(resolve, reject){
-        resolve(true);
+        self.aVar = "( Marty McFly )";
       });
   },
   get:function(req, opt){
-    return { foo:(req + "-zoo") };
+    return { foo:(req + " " + this.aVar) };
   }
 };
 
 c3po.get("foo::bar")
 .then(function(s){
-  console.log("success : ", s); // { foo:"bar-zoo" }
+  console.log("success : ", s); // { foo:"bar ( Marty McFly )" }
 });
 ```
 
 ## Contextualised protocols
 
-As C-3PO, sometimes it's necessary to use contextualised protocols to remain fully diplomatic... ;)
+As the real C-3PO, sometimes it's necessary to use contextualised protocols to remain fully diplomatic.
+By example, a server would define a particular CWD for a FS call depending on user that do the request.
+Or maybe a server will allow particular actions when talking to specific resources, always depending on requester.
+
+This could be called "contextualisation".
+
+c3po could manage two kind of contextualisation that is coming from two other tools : [deep-ocm](https://github.com/deepjs/deep-ocm) and [glocal](https://github.com/nomocas/glocal).
+
+To fully understand the trick, you should obviously understand those two tools independently before understanding how to mix them with c3po.
 
 ### Promise Glocal protocols namespace
 
 ### OCM manager as protocol
 
-
 ## Dedicated protocols
 
-### js asynchroneous loader :
+### js asycnhroneous loader
 
 AMD and CommonJS environnement (based on "require" availability) :
 
