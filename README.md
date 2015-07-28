@@ -78,7 +78,7 @@ c3po.interpolator = {
 };
 ```
 
-Or with [expansion](https://github.com/nomocas/expansio) : 
+Or with [expansio](https://github.com/nomocas/expansio) : 
 ```javascript
 c3po.interpolator = require("expansio");
 ```
