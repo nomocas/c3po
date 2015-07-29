@@ -8,7 +8,7 @@
  */
 (function(define) {
 	"use strict";
-	define([], function() {
+	define("c3po", [], function() {
 		var parser = /^([\w-]+)(?:\.([\w-]+)(?:\(([^\)]*)\))?)?::([^$]*)/;
 		var Request = function(request) {
 			this.__c3po__ = true;
@@ -39,11 +39,11 @@
 				if (protocol && typeof protocol.then === 'function') // protocol is under init
 					return protocol.then(function(protocol) {
 					if (!protocol[self.method])
-						throw new Error("there is no method named '%s' in protocol '%s'!", self.method, self.protocol);
+						throw new Error("there is no method named " + self.method + " in protocol " + self.protocol + "!");
 					return protocol[self.method].apply(protocol, args);
 				});
 				if (!protocol[this.method])
-					throw new Error("there is no method named '%s' in protocol '%s'!", self.method, self.protocol);
+					throw new Error("there is no method named " + self.method + " in protocol " + self.protocol + "!");
 				return protocol[this.method].apply(protocol, args);
 			}
 		};
@@ -123,11 +123,11 @@
 		};
 		return c3po;
 	});
-})(typeof define !== 'undefined' ? define : function(deps, factory) { // AMD/RequireJS format if available
+})(typeof define !== 'undefined' ? define : function(id, deps, factory) { // AMD/RequireJS format if available
 	if (typeof module !== 'undefined')
 		module.exports = factory(); // CommonJS environment
 	else if (typeof window !== 'undefined')
-		window.c3po = factory(); // raw script, assign to c3po global
+		window[id] = factory(); // raw script, assign to c3po global
 	else
-		console.warn('c3po has not been mounted somewhere.');
+		console.warn('"%s" has not been mounted somewhere.', id);
 });
