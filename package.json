@@ -7,7 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "bump:patch": "git add -A && git commit -m 'patch version' && git push && mversion patch -m && git push --tags && npm publish",
+    "bump:minor": "git add -A && git commit -m 'patch version' && git push && mversion minor -m && git push --tags && npm publish",
+    "bump:major": "git add -A && git commit -m 'patch version' && git push && mversion major -m && git push --tags && npm publish"
   },
   "repository": {
     "type": "git",
