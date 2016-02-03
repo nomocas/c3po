@@ -49,7 +49,7 @@
 				if (!protocol)
 					protocol = c3po.protocols[name];
 				if (!protocol)
-					throw new Error("no protocol found with : ", name);
+					throw new Error("no protocol found with : " + name);
 				return protocol;
 			}
 			return name;
