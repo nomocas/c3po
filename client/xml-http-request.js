@@ -5,6 +5,10 @@
 	https://github.com/LuvDaSun/xhr-polyfill
  */
 
+function setOps(baseURI) {
+	this.baseURI = baseURI;
+}
+
 var requesters = {
 	text: {
 		get: function(url, opt) {
@@ -35,7 +39,25 @@ var requesters = {
 			};
 			return requesters.text.get(url, opt);
 		}
+	},
+	JSON: function(baseURI) {
+		setOps.call(this, baseURI);
+	},
+	Text: function(baseURI) {
+		setOps.call(this, baseURI);
 	}
 };
 
+requesters.Text.prototype = {
+	get: function(url, opt) {
+		url = (this.baseURI ? this.baseURI : '') + url;
+		return requesters.text.get(url, opt);
+	}
+}
+requesters.JSON.prototype = {
+	get: function(url, opt) {
+		url = (this.baseURI ? this.baseURI : '') + url;
+		return requesters.json.get(url, opt);
+	}
+}
 module.exports = requesters;
