@@ -135,8 +135,44 @@
 				return Promise.all(requests.map(function(request) {
 					return c3po.get(request, options, context);
 				}));
+			},
+			post: function(protocol, data, opt) {
+				return this.protocol(protocol).then(function(proto) {
+					if (!proto.post)
+						throw new y.Error(405, 'no post method defined on protocol : ' + protocol);
+					return proto.post(data, opt);
+				});
+			},
+			put: function(protocol, data, opt) {
+				return this.protocol(protocol).then(function(proto) {
+					if (!proto.put)
+						throw new y.Error(405, 'no put method defined on protocol : ' + protocol);
+					return proto.put(data, opt);
+				});
+			},
+			del: function(protocol, path, opt) {
+				return this.protocol(protocol).then(function(proto) {
+					if (!proto.del)
+						throw new y.Error(405, 'no del method defined on protocol : ' + protocol);
+					return proto.del(path, opt);
+				});
+			},
+			patch: function(protocol, data, path, opt) {
+				return this.protocol(protocol).then(function(proto) {
+					if (!proto.patch)
+						throw new y.Error(405, 'no patch method defined on protocol : ' + protocol);
+					return proto.patch(data, path, opt);
+				});
+			},
+			'default': function(protocol, data, path, opt) {
+				return this.protocol(protocol).then(function(proto) {
+					if (!proto.default)
+						throw new y.Error(405, 'no default method defined on protocol : ' + protocol);
+					return proto.default(data, path, opt);
+				});
 			}
 		};
+
 
 		// module.exports = c3po;
 		return c3po;
