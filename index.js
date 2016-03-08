@@ -52,6 +52,8 @@
 					throw new Error("no protocol found with : " + name);
 				return protocol;
 			}
+			if (!name)
+				throw new Error("no protocol found with : " + name);
 			return name;
 		}
 
