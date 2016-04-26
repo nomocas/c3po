@@ -1,13 +1,9 @@
 /**
- * simple http client based on XMLHTTPRequest and that return Promises.
+ * really simple http client based on XMLHTTPRequest that return Promises.
  *
  * IE8 polyfill for xhr : 
 	https://github.com/LuvDaSun/xhr-polyfill
  */
-
-function setOps(baseURI) {
-	this.baseURI = baseURI;
-}
 
 var requesters = {
 	text: {
@@ -41,10 +37,10 @@ var requesters = {
 		}
 	},
 	JSON: function(baseURI) {
-		setOps.call(this, baseURI);
+		this.baseURI = baseURI;
 	},
 	Text: function(baseURI) {
-		setOps.call(this, baseURI);
+		this.baseURI = baseURI;
 	}
 };
 
