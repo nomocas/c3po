@@ -6,8 +6,10 @@ function AxiosClient(opt) {
 	this.defaultObject = opt.defaultObj;
 	if (opt.parser)
 		this.parser = function(data, req) {
+			if (typeof data !== "string")
+				return data;
 			try {
-				return this.parser(data, req);
+				return opt.parser(data, req);
 			} catch (e) {
 				console.error('AxiosClient : error while parsing ! ', e);
 				return null;
@@ -21,14 +23,19 @@ AxiosClient.prototype = {
 	get: function(req, opt) {
 		if (this.cache && this.cache[req])
 			return this.cache[req];
-		var self = this;
-		return axios.get(this.baseURI + req)
+		var self = this,
+			uri = this.baseURI + req
+		return axios.get(uri)
 			.then(function(s) {
 				if (self.parser)
 					s.data = self.parser(s.data, req);
 				if (self.cache)
 					self.cache[req] = s.data;
 				return s.data;
+			})
+			.catch(function(e) {
+				console.error("AxiosClient get error (uri : %s) : ", uri, e);
+				throw e;
 			});
 	},
 	del: function(id, opt) {
@@ -39,6 +46,9 @@ AxiosClient.prototype = {
 				if (self.cache && self.cache[req])
 					delete self.cache[req];
 				return s.data;
+			})
+			.catch(function(e) {
+				console.error("AxiosClient del error (uri : %s) : ", req, e);
 			});
 	},
 	post: function(data, opt) {
@@ -52,6 +62,9 @@ AxiosClient.prototype = {
 				if (self.cache)
 					self.cache[req] = s.data;
 				return s.data;
+			})
+			.catch(function(e) {
+				console.error("AxiosClient post error (uri : %s) : ", self.baseURI, e);
 			});
 	},
 	put: function(data, opt) {
@@ -64,15 +77,22 @@ AxiosClient.prototype = {
 				if (self.cache)
 					self.cache[req] = s.data;
 				return s.data;
+			})
+			.catch(function(e) {
+				console.error("AxiosClient put error (uri : %s) : ", req, e);
 			});
 	},
 	default: function() {
 		return y.utils.copy(this.defaultObject);
 	},
 	first: function(filter) {
-		return axios.get(this.baseURI + 'findOne/' + filter)
+		var uri = this.baseURI + 'findOne/' + (filter || '');
+		return axios.get(uri)
 			.then(function(s) {
 				return s.data;
+			})
+			.catch(function(e) {
+				console.error("AxiosClient .first error (uri : %s) : ", uri, e);
 			});
 	}
 };
