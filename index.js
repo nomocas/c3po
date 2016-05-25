@@ -84,8 +84,12 @@
 					self = this,
 					args = this.args ? [].concat(this.args, uri, options) : [uri, options];
 				return protocol.then(function(protocol) {
-					return exec(protocol, self, args);
-				});
+						return exec(protocol, self, args);
+					})
+					.catch(function(e) {
+						console.error("%s protocol get error (uri : %s) : ", self.protocol, uri, e);
+						throw e;
+					})
 			}
 		};
 		var c3po = {
@@ -138,31 +142,43 @@
 			},
 			post: function(protocol, data, opt) {
 				return this.protocol(protocol).then(function(proto) {
-					if (!proto.post)
-						throw new y.Error(405, 'no post method defined on protocol : ' + protocol);
-					return proto.post(data, opt);
-				});
+						if (!proto.post)
+							throw new y.Error(405, 'no post method defined on protocol : ' + protocol);
+						return proto.post(data, opt);
+					})
+					.catch(function(e) {
+						console.error("%s protocol post error : ", protocol, e);
+					});
 			},
 			put: function(protocol, data, opt) {
 				return this.protocol(protocol).then(function(proto) {
-					if (!proto.put)
-						throw new y.Error(405, 'no put method defined on protocol : ' + protocol);
-					return proto.put(data, opt);
-				});
+						if (!proto.put)
+							throw new y.Error(405, 'no put method defined on protocol : ' + protocol);
+						return proto.put(data, opt);
+					})
+					.catch(function(e) {
+						console.error("%s protocol put error : ", protocol, e);
+					});
 			},
 			del: function(protocol, path, opt) {
 				return this.protocol(protocol).then(function(proto) {
-					if (!proto.del)
-						throw new y.Error(405, 'no del method defined on protocol : ' + protocol);
-					return proto.del(path, opt);
-				});
+						if (!proto.del)
+							throw new y.Error(405, 'no del method defined on protocol : ' + protocol);
+						return proto.del(path, opt);
+					})
+					.catch(function(e) {
+						console.error("%s protocol delete error : ", protocol, e);
+					});
 			},
 			patch: function(protocol, data, path, opt) {
 				return this.protocol(protocol).then(function(proto) {
-					if (!proto.patch)
-						throw new y.Error(405, 'no patch method defined on protocol : ' + protocol);
-					return proto.patch(data, path, opt);
-				});
+						if (!proto.patch)
+							throw new y.Error(405, 'no patch method defined on protocol : ' + protocol);
+						return proto.patch(data, path, opt);
+					})
+					.catch(function(e) {
+						console.error("%s protocol patch error : ", protocol, e);
+					});
 			},
 			'default': function(protocol, data, path, opt) {
 				return this.protocol(protocol).then(function(proto) {
