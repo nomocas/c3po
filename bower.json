@@ -1,7 +1,7 @@
 {
   "name": "c3po",
   "main": "index.js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "authors": [
     "Gilles Coomans <gilles.coomans@gmail.com>"
   ],
