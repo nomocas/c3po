@@ -1,6 +1,5 @@
-var fs = require("fs");
-
-function FSClient(basePath, parser, useCache) {
+function FSClient(fs, basePath, parser, useCache) {
+	this.fs = fs;
 	this.basePath = basePath;
 	this.parser = parser;
 	if (useCache)
@@ -12,8 +11,9 @@ FSClient.prototype = {
 		var self = this;
 		if (this.cache && this.cache[req])
 			return Promise.resolve(this.cache[req]);
+		var path = (self.basePath ? self.basePath : '') + req;
 		var p = new Promise(function(resolve, reject) {
-			fs.readFile((self.basePath ? self.basePath : '') + req, 'utf8', function(err, content) {
+			self.fs.readFile(path, 'utf8', function(err, content) {
 				if (err)
 					return reject(err);
 				var result = self.parser ? self.parser(content) : content;
@@ -24,6 +24,11 @@ FSClient.prototype = {
 		});
 		if (this.cache)
 			this.cache[req] = p;
+		return p
+			.catch(function(e) {
+				console.error('FSClient error (path : %s) : ', path, e);
+				throw e;
+			});
 	}
 };
 
