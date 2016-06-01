@@ -170,11 +170,11 @@
 						console.error("%s protocol delete error : ", protocol, e);
 					});
 			},
-			patch: function(protocol, data, path, opt) {
+			patch: function(protocol, id, data, path, opt) {
 				return this.protocol(protocol).then(function(proto) {
 						if (!proto.patch)
 							throw new y.Error(405, 'no patch method defined on protocol : ' + protocol);
-						return proto.patch(data, path, opt);
+						return proto.patch(id, data, path, opt);
 					})
 					.catch(function(e) {
 						console.error("%s protocol patch error : ", protocol, e);

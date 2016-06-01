@@ -67,6 +67,20 @@ AxiosClient.prototype = {
 				console.error("AxiosClient post error (uri : %s) : ", self.baseURI, e);
 			});
 	},
+	patch: function(id, value, path, opt) {
+		var self = this;
+		return axios.post(this.baseURI + 'patch', {
+				id: id,
+				path: path,
+				value: value
+			})
+			.then(function(s) {
+				return s.data;
+			})
+			.catch(function(e) {
+				console.error("AxiosClient post error (uri : %s) : ", self.baseURI, e);
+			});
+	},
 	put: function(data, opt) {
 		var self = this,
 			req = this.baseURI + data.id;
