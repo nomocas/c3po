@@ -1,7 +1,9 @@
 /**
- * c3po : Lightweight but powerful protocols manager.
+ * c3po : Lightweight and powerful protocols manager.
  *  
  * Aimed to be used both sides (server side and/or browser side) to give real isomorphic approach when designing object that need ressources.
+ *
+ * See docs.
  * 
  * @author Gilles Coomans <gilles.coomans@gmail.com>
  * @licence MIT
@@ -141,9 +143,10 @@
 				}));
 			},
 			post: function(protocol, data, opt) {
-				return this.protocol(protocol).then(function(proto) {
+				return this.protocol(protocol)
+					.then(function(proto) {
 						if (!proto.post)
-							throw new y.Error(405, 'no post method defined on protocol : ' + protocol);
+							throw new y.Error(405, 'no "post" method defined on protocol : ' + protocol);
 						return proto.post(data, opt);
 					})
 					.catch(function(e) {
@@ -151,9 +154,10 @@
 					});
 			},
 			put: function(protocol, data, opt) {
-				return this.protocol(protocol).then(function(proto) {
+				return this.protocol(protocol)
+					.then(function(proto) {
 						if (!proto.put)
-							throw new y.Error(405, 'no put method defined on protocol : ' + protocol);
+							throw new y.Error(405, 'no "put" method defined on protocol : ' + protocol);
 						return proto.put(data, opt);
 					})
 					.catch(function(e) {
@@ -161,9 +165,10 @@
 					});
 			},
 			del: function(protocol, path, opt) {
-				return this.protocol(protocol).then(function(proto) {
+				return this.protocol(protocol)
+					.then(function(proto) {
 						if (!proto.del)
-							throw new y.Error(405, 'no del method defined on protocol : ' + protocol);
+							throw new y.Error(405, 'no "del" method defined on protocol : ' + protocol);
 						return proto.del(path, opt);
 					})
 					.catch(function(e) {
@@ -171,9 +176,10 @@
 					});
 			},
 			patch: function(protocol, id, data, path, opt) {
-				return this.protocol(protocol).then(function(proto) {
+				return this.protocol(protocol)
+					.then(function(proto) {
 						if (!proto.patch)
-							throw new y.Error(405, 'no patch method defined on protocol : ' + protocol);
+							throw new y.Error(405, 'no "patch" method defined on protocol : ' + protocol);
 						return proto.patch(id, data, path, opt);
 					})
 					.catch(function(e) {
@@ -181,16 +187,25 @@
 					});
 			},
 			'default': function(protocol, data, path, opt) {
-				return this.protocol(protocol).then(function(proto) {
-					if (!proto.default)
-						throw new y.Error(405, 'no default method defined on protocol : ' + protocol);
-					return proto.default(data, path, opt);
-				});
+				return this.protocol(protocol)
+					.then(function(proto) {
+						if (!proto.default)
+							throw new y.Error(405, 'no "default" method defined on protocol : ' + protocol);
+						return proto.default(data, path, opt);
+					});
+			},
+			remote: function(protocol, method, data, opt) {
+				return this.protocol(protocol)
+					.then(function(proto) {
+						if (!proto.remote)
+							throw new y.Error(405, 'c3po remote error : no "remote" method defined on protocol : ' + protocol);
+						return proto.remote(method, data, opt);
+					})
+					.catch(function(e) {
+						console.error("%s protocol remote error : ", protocol, e);
+					});
 			}
 		};
-
-
-		// module.exports = c3po;
 		return c3po;
 	});
 })(typeof define !== 'undefined' ? define : function(id, deps, factory) { // AMD/RequireJS format if available
