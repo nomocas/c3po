@@ -13,6 +13,7 @@ function LoopbackClient(app, modelName) {
 
 LoopbackClient.prototype = {
 	get: function(query, opt) {
+		query = query || '?';
 		if (query[0] === '?')
 			return this.Model.find(qs.parse(query.substring(1)));
 		return this.Model.findById(query);
