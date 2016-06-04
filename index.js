@@ -4,6 +4,8 @@
  * Aimed to be used both sides (server side and/or browser side) to give real isomorphic approach when designing object that need ressources.
  *
  * See docs.
+ *
+ * TODO : use CommonJS pattern. Include nomocas-utils/lib/promise-log
  * 
  * @author Gilles Coomans <gilles.coomans@gmail.com>
  * @licence MIT
@@ -89,7 +91,7 @@
 						return exec(protocol, self, args);
 					})
 					.catch(function(e) {
-						console.error("%s protocol get error (uri : %s) : ", self.protocol, uri, e);
+						console.error("%s protocol request exec (get) error (uri : %s) : ", self.protocol, uri, e);
 						throw e;
 					})
 			}
@@ -149,8 +151,11 @@
 							throw new y.Error(405, 'no "post" method defined on protocol : ' + protocol);
 						return proto.post(data, opt);
 					})
-					.catch(function(e) {
-						console.error("%s protocol post error : ", protocol, e);
+					.addToError({
+						level: 'c3po',
+						protocol: protocol,
+						method: 'post',
+						data: data
 					});
 			},
 			put: function(protocol, data, opt) {
@@ -160,19 +165,25 @@
 							throw new y.Error(405, 'no "put" method defined on protocol : ' + protocol);
 						return proto.put(data, opt);
 					})
-					.catch(function(e) {
-						console.error("%s protocol put error : ", protocol, e);
+					.addToError({
+						level: 'c3po',
+						protocol: protocol,
+						method: 'put',
+						data: data
 					});
 			},
-			del: function(protocol, path, opt) {
+			del: function(protocol, id, opt) {
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.del)
 							throw new y.Error(405, 'no "del" method defined on protocol : ' + protocol);
-						return proto.del(path, opt);
+						return proto.del(id, opt);
 					})
-					.catch(function(e) {
-						console.error("%s protocol delete error : ", protocol, e);
+					.addToError({
+						level: 'c3po',
+						protocol: protocol,
+						method: 'del',
+						id: id
 					});
 			},
 			patch: function(protocol, id, data, path, opt) {
@@ -182,8 +193,13 @@
 							throw new y.Error(405, 'no "patch" method defined on protocol : ' + protocol);
 						return proto.patch(id, data, path, opt);
 					})
-					.catch(function(e) {
-						console.error("%s protocol patch error : ", protocol, e);
+					.addToError({
+						level: 'c3po',
+						protocol: protocol,
+						method: 'patch',
+						id: id,
+						data: data,
+						path: path
 					});
 			},
 			'default': function(protocol, data, path, opt) {
@@ -201,8 +217,12 @@
 							throw new y.Error(405, 'c3po remote error : no "remote" method defined on protocol : ' + protocol);
 						return proto.remote(method, data, opt);
 					})
-					.catch(function(e) {
-						console.error("%s protocol remote error : ", protocol, e);
+					.addToError({
+						level: 'c3po',
+						protocol: protocol,
+						method: 'remote',
+						remoteMethod: method,
+						data: data
 					});
 			}
 		};
@@ -214,5 +234,5 @@
 	else if (typeof window !== 'undefined')
 		window[id] = factory(); // raw script, assign to c3po global
 	else
-		console.warn('"%s" has not been mounted somewhere.', id);
+		console.warn('"%s" has not been set somewhere.', id);
 });
