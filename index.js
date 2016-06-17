@@ -15,6 +15,17 @@
 	define("c3po", [], function() {
 		var parser = /^([\w-]+)(?:\.([\w-]+)(?:\(([^\)]*)\))?)?::([^$]*)/;
 
+		var cError = function(status, message, report) {
+			Error.call(this, message);
+			this.status = status;
+			if (report)
+				this.report = report;
+		};
+		cError.prototype = new Error();
+		cError.toString = function() {
+			return '(status ' + this.status + ') ' + this.message + (this.report ? (' - ' + JSON.stringify(this.report)) : '');
+		};
+
 		function parseRequest(request, obj) {
 			var match = parser.exec(request);
 			if (match) {
@@ -39,7 +50,7 @@
 
 		function exec(protocol, self, args) {
 			if (!protocol[self.method])
-				throw new Error("there is no method named " + self.method + " in protocol " + self.protocol + "!");
+				throw new cError(405, "there is no method named " + self.method + " in protocol " + self.protocol + "!");
 			return protocol[self.method].apply(protocol, args);
 		}
 
@@ -53,11 +64,11 @@
 				if (!protocol)
 					protocol = c3po.protocols[name];
 				if (!protocol)
-					throw new Error("no protocol found with : " + name);
+					throw new cError(405, "no protocol found with : " + name);
 				return protocol;
 			}
 			if (!name)
-				throw new Error("no protocol found with : " + name);
+				throw new cError(405, "no protocol found with : " + name);
 			return name;
 		}
 
@@ -113,14 +124,6 @@
 			protocol: function(name) {
 				return new Promise(function(resolve, reject) {
 					var protocol = getProtocol(name);
-					// manage flattener
-					if (protocol._deep_flattener_ && !protocol._deep_flattened_)
-						return (protocol._deep_flattening_ ? protocol._deep_flattening_ : protocol.flatten())
-							.then(c3po.protocol)
-							.then(resolve, reject);
-					// manage ocm resolution
-					if (protocol._deep_ocm_)
-						protocol = protocol();
 					// manage initialisation if needed
 					if (protocol.init && !protocol.initialised)
 						return initialiseProtocol(protocol).then(resolve, reject);
@@ -148,7 +151,7 @@
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.post)
-							throw new y.Error(405, 'no "post" method defined on protocol : ' + protocol);
+							throw new cError(405, 'no "post" method defined on protocol : ' + protocol);
 						return proto.post(data, opt);
 					})
 					.addToError({
@@ -162,7 +165,7 @@
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.put)
-							throw new y.Error(405, 'no "put" method defined on protocol : ' + protocol);
+							throw new cError(405, 'no "put" method defined on protocol : ' + protocol);
 						return proto.put(data, opt);
 					})
 					.addToError({
@@ -176,7 +179,7 @@
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.del)
-							throw new y.Error(405, 'no "del" method defined on protocol : ' + protocol);
+							throw new cError(405, 'no "del" method defined on protocol : ' + protocol);
 						return proto.del(id, opt);
 					})
 					.addToError({
@@ -190,7 +193,7 @@
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.patch)
-							throw new y.Error(405, 'no "patch" method defined on protocol : ' + protocol);
+							throw new cError(405, 'no "patch" method defined on protocol : ' + protocol);
 						return proto.patch(id, data, path, opt);
 					})
 					.addToError({
@@ -206,7 +209,7 @@
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.default)
-							throw new y.Error(405, 'no "default" method defined on protocol : ' + protocol);
+							throw new cError(405, 'no "default" method defined on protocol : ' + protocol);
 						return proto.default(data, path, opt);
 					});
 			},
@@ -214,7 +217,7 @@
 				return this.protocol(protocol)
 					.then(function(proto) {
 						if (!proto.remote)
-							throw new y.Error(405, 'c3po remote error : no "remote" method defined on protocol : ' + protocol);
+							throw new cError(405, 'c3po remote error : no "remote" method defined on protocol : ' + protocol);
 						return proto.remote(method, data, opt);
 					})
 					.addToError({
@@ -226,6 +229,7 @@
 					});
 			}
 		};
+
 		return c3po;
 	});
 })(typeof define !== 'undefined' ? define : function(id, deps, factory) { // AMD/RequireJS format if available
