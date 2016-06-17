@@ -20,6 +20,24 @@ LoopbackClient.prototype = {
 	},
 	first: function(query) {
 		return this.Model.findOne(qs.parse(query[0] === '?' ? query.substring(1) : query));
+	},
+	remote: function(method, data, opt) {
+		// TODO : analyse argument order
+		var uri = this.baseURI + method,
+			func = this.Model[method];
+		if (!func)
+			throw new Error('Loopback client : remote : no method found as ' + method);
+		var args = [];
+		for (var i in data)
+			args.push(data[i]);
+		return func.apply(thi.Model, args)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'remote',
+				uri: uri,
+				remoteMethod: method,
+				data: data
+			});
 	}
 };
 
