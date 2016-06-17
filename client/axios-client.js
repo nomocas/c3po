@@ -1,9 +1,14 @@
 var axios = require('axios');
+require('nomocas-utils/lib/promise-log');
+
+function rethrowError(e) {
+	throw e.data.error;
+}
 
 function AxiosClient(opt) {
 	opt = opt || {};
 	this.baseURI = opt.baseURI;
-	this.defaultObject = opt.defaultObj;
+	this.defaultObject = opt.defaultObj ||  {};
 	if (opt.parser)
 		this.parser = function(data, req) {
 			if (typeof data !== "string")
@@ -11,7 +16,7 @@ function AxiosClient(opt) {
 			try {
 				return opt.parser(data, req);
 			} catch (e) {
-				console.error('AxiosClient : error while parsing ! ', e);
+				console.error('AxiosClient : error while parsing response ! ', e);
 				return null;
 			}
 		};
@@ -24,7 +29,7 @@ AxiosClient.prototype = {
 		if (this.cache && this.cache[req])
 			return this.cache[req];
 		var self = this,
-			uri = this.baseURI + req
+			uri = this.baseURI + req;
 		return axios.get(uri)
 			.then(function(s) {
 				if (self.parser)
@@ -33,9 +38,11 @@ AxiosClient.prototype = {
 					self.cache[req] = s.data;
 				return s.data;
 			})
-			.catch(function(e) {
-				console.error("AxiosClient get error (uri : %s) : ", uri, e);
-				throw e;
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'get',
+				uri: uri
 			});
 	},
 	del: function(id, opt) {
@@ -47,8 +54,11 @@ AxiosClient.prototype = {
 					delete self.cache[req];
 				return s.data;
 			})
-			.catch(function(e) {
-				console.error("AxiosClient del error (uri : %s) : ", req, e);
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'del',
+				uri: req
 			});
 	},
 	post: function(data, opt) {
@@ -63,13 +73,18 @@ AxiosClient.prototype = {
 					self.cache[req] = s.data;
 				return s.data;
 			})
-			.catch(function(e) {
-				console.error("AxiosClient post error (uri : %s) : ", self.baseURI, e);
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'post',
+				uri: this.baseURI,
+				data: data
 			});
 	},
 	patch: function(id, value, path, opt) {
-		var self = this;
-		return axios.post(this.baseURI + 'patch', {
+		var self = this,
+			uri = this.baseURI + 'patch';
+		return axios.post(uri, {
 				id: id,
 				path: path,
 				value: value
@@ -77,8 +92,14 @@ AxiosClient.prototype = {
 			.then(function(s) {
 				return s.data;
 			})
-			.catch(function(e) {
-				console.error("AxiosClient post error (uri : %s) : ", self.baseURI, e);
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'patch',
+				uri: uri,
+				id: id,
+				value: value,
+				path: path
 			});
 	},
 	put: function(data, opt) {
@@ -92,21 +113,43 @@ AxiosClient.prototype = {
 					self.cache[req] = s.data;
 				return s.data;
 			})
-			.catch(function(e) {
-				console.error("AxiosClient put error (uri : %s) : ", req, e);
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'put',
+				uri: req,
+				data: data
 			});
 	},
 	default: function() {
 		return y.utils.copy(this.defaultObject);
 	},
-	first: function(filter) {
+	first: function(filter, opt) {
 		var uri = this.baseURI + 'findOne/' + (filter || '');
 		return axios.get(uri)
 			.then(function(s) {
 				return s.data;
 			})
-			.catch(function(e) {
-				console.error("AxiosClient .first error (uri : %s) : ", uri, e);
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'first',
+				uri: uri
+			});
+	},
+	remote: function(method, data, opt) {
+		var uri = this.baseURI + method;
+		return axios.post(uri, data)
+			.then(function(s) {
+				return s.data;
+			})
+			.catch(rethrowError)
+			.addToError({
+				level: 'AxiosClient',
+				method: 'remote',
+				uri: uri,
+				remoteMethod: method,
+				data: data
 			});
 	}
 };
