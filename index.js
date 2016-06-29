@@ -16,7 +16,7 @@
 		var parser = /^([\w-]+)(?:\.([\w-]+)(?:\(([^\)]*)\))?)?::([^$]*)/;
 
 		var cError = function(status, message, report) {
-			Error.call(this, message);
+			this.message = message;
 			this.status = status;
 			if (report)
 				this.report = report;
